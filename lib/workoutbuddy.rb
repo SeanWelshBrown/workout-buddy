@@ -13,6 +13,8 @@ class WorkoutBuddy
   def run 
     greet
     login
+    sleep 1.5
+    main_menu
   end
 
   # GENERAL METHODS #
@@ -21,25 +23,25 @@ class WorkoutBuddy
     puts "Welcome to WorkoutBuddy, your source for quality exercise tips and your very own personal workout tracker!"
   end
 
-  def exit
-    input = PROMPT.ask('Are you sure you want to exit? (yes/no)', convert: :string, required: true) do |q|
+  def exit_app
+    input = PROMPT.ask('Are you sure you want to exit? (y/n)', convert: :string, required: true) do |q|
       q.modify :down
     end
-    if input == "yes"
+    if input == "yes" || input == "y"
       puts "So long for now!"
       abort
-    elsif input == "no"
+    elsif input == "no" || input == "n"
       method = caller_locations.last.label
       method
     elsif !input.include?("yes" || "no")
       puts "Please enter 'yes' or 'no'"
-      exit
+      exit_app
     end
   end
 
   def exit_check(input)
     if input == "exit"
-      exit
+      exit_app
     end
   end
 
@@ -104,20 +106,35 @@ class WorkoutBuddy
 
   def login
     input = PROMPT.select("Please log in to your existing account, or create a new account if you are a new user. (It's easy, we promise!)", ["Log in", "Create an Account", "Exit Application"])
+
     if input == "Log in"
       log_into_account
     elsif input == "Create an Account"
       puts "Thank you for choosing to create an account!"
       create_account
     elsif input == "Exit Application"
-      exit
+      exit_app
     end
   end
 
   # MAIN MENU METHODS #
 
   def main_menu
-    
+    puts "MAIN MENU"
+    input = PROMPT.select("Please select an option to navigate:", ["View Exercises", "View Your Saved Exercises", "Edit Account Information", "Log Out", "Exit Application"])
+
+    if input == "View Exercises"
+
+    elsif input == "View Your Saved Exercises"
+
+    elsif input == "Edit Account Information"
+      
+    elsif input == "Log Out"
+      @@current_user = nil
+      login
+    elsif input == "Exit Application"
+      exit_app
+    end
   end
 
 end
