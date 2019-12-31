@@ -1,3 +1,6 @@
 require_relative '../config/environment'
 
-puts "hello world"
+application = WorkoutBuddy.new
+
+application.run
+
