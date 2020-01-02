@@ -13,14 +13,16 @@ class WorkoutBuddy
   def run 
     greet
     login
-    sleep 1.5
+    sleep 2
     main_menu
   end
 
   # GENERAL METHODS #
 
   def greet
+    system 'clear'
     puts "Welcome to WorkoutBuddy, your source for quality exercise tips and your very own personal workout tracker!"
+    puts "\n"
   end
 
   def exit_app
@@ -31,8 +33,7 @@ class WorkoutBuddy
       puts "So long for now!"
       abort
     elsif input == "no" || input == "n"
-      method = caller_locations.last.label
-      method
+      go_to_previous_menu
     elsif !input.include?("yes" || "no")
       puts "Please enter 'yes' or 'no'"
       exit_app
@@ -45,20 +46,40 @@ class WorkoutBuddy
     end
   end
 
-  # LOGIN METHODS #
-
-  def find_user(input)
+  def find_user_by_username(input)
     User.find_by(username: input)
   end
 
+  def go_to_previous_menu
+    previous_method = caller[-3].split("`").pop.gsub("'", "")
+    previous_method.to_sym
+    send(previous_method)
+  end
+
+  # LOGIN METHODS #
+
+  def login
+    input = PROMPT.select("Please log in to your existing account, or create a new account if you are a new user. (It's easy, we promise!)", ["Log in", "Create an Account", "Exit Application"])
+
+    if input == "Log in"
+      log_into_account
+    elsif input == "Create an Account"
+      puts "Thank you for choosing to create an account!"
+      create_account
+    elsif input == "Exit Application"
+      exit_app
+    end
+  end
+
   def log_into_account
+    system 'clear'
     input = PROMPT.ask("Please enter your Username, or 'create account' to create a new account. You may also enter 'exit' to exit the program.", convert: :string, required: true)
     if input == "create account"
       create_account
     end
     exit_check(input)
 
-    user_check = find_user(input)
+    user_check = find_user_by_username(input)
     if user_check
       @@current_user = user_check
       puts "Successfully logged in. Nice to see you again, #{@@current_user.first_name}!"
@@ -69,6 +90,8 @@ class WorkoutBuddy
   end
 
   def create_account
+    system 'clear'
+
     username = nil
     first_name = nil
     last_name = nil
@@ -82,7 +105,7 @@ class WorkoutBuddy
     end
     exit_check(input1)
 
-    user_check = find_user(input1)
+    user_check = find_user_by_username(input1)
 
     if user_check
       puts "This Username already exists."
@@ -104,37 +127,100 @@ class WorkoutBuddy
 
   end
 
-  def login
-    input = PROMPT.select("Please log in to your existing account, or create a new account if you are a new user. (It's easy, we promise!)", ["Log in", "Create an Account", "Exit Application"])
+  # MAIN MENU #
 
-    if input == "Log in"
-      log_into_account
-    elsif input == "Create an Account"
-      puts "Thank you for choosing to create an account!"
-      create_account
+  def main_menu
+    system 'clear'
+
+    puts "MAIN MENU"
+    input = PROMPT.select("Please select an option to navigate:", ["View Exercises", "View Your Saved Exercises", "Edit Account Information", "Log Out", "Exit Application"])
+
+    if input == "View Exercises"
+      view_exercises
+    elsif input == "View Your Saved Exercises"
+
+    elsif input == "Edit Account Information"
+
+    elsif input == "Log Out"
+      @@current_user = nil
+      system 'clear'
+      login
     elsif input == "Exit Application"
       exit_app
     end
   end
 
-  # MAIN MENU METHODS #
+  # 'VIEW EXERCISES' METHODS #
 
-  def main_menu
-    puts "MAIN MENU"
-    input = PROMPT.select("Please select an option to navigate:", ["View Exercises", "View Your Saved Exercises", "Edit Account Information", "Log Out", "Exit Application"])
+    # GENERAL EXERCISE METHODS #
 
-    if input == "View Exercises"
-
-    elsif input == "View Your Saved Exercises"
-
-    elsif input == "Edit Account Information"
-      
-    elsif input == "Log Out"
-      @@current_user = nil
-      login
-    elsif input == "Exit Application"
-      exit_app
+    def find_exercise_type(input)
+      Exercise.where("type = '#{input}'")
     end
+  
+    def find_exercise_body_part(input)
+      Exercise.where(["type = ? and body_part = ?", "Strength", "#{input}"])
+    end
+  
+    def display_exercise_info(exercise_name, previous_menu)
+      exercise = Exercise.find_by(name: exercise_name)
+      puts "Name: #{exercise.name}"
+      puts "\n"
+      puts "Muscle Group: #{exercise.muscle_group}"
+      puts "\n"
+      puts "Description"
+      puts exercise.description
+      puts "\n"
+
+      sleep 1.5
+
+      input = PROMPT.select("What would you like to do?", ["Add this exercise to my workout list", "Go back to previous menu"])
+
+      if input == "Add this exercise to my workout list"
+
+      elsif input == "Go back to previous menu"
+        go_to_previous_menu
+      end
+    end
+
+    # EXERCISE MENU #
+
+  def view_exercises
+    input = PROMPT.select("Would you like to learn about Strength Training or Cardio exercises?", ["Strength Training", "Cardio", "Go back to previous menu"])
+
+    if input == "Strength Training"
+
+    elsif input == "Cardio"
+
+    elsif input == "Go back to previous menu"
+      go_to_previous_menu
+    end
+  end
+
+    # STRENGTH MENU #
+
+  def strength_training
+    input = PROMPT.select("What part of the body would you like to focus on?", ["Arms", "Legs", "Core"])
+
+    if input == "Arms"
+      arms
+    elsif input == "Legs"
+      legs
+    elsif input == "Core"
+      core
+    end
+  end
+
+  def arms
+
+  end
+
+  def legs
+    
+  end
+
+  def core 
+
   end
 
 end
