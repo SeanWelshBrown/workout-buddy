@@ -40,6 +40,7 @@ DatabaseCleaner.clean_with(:truncation)
 
 # -- USERS -- #
 
+User.create(username: "swb258", first_name: "Sean", last_name: "Brown", age: 28)
 User.create(username: "Snowballdog", first_name: "Jeff", last_name: "Brown", age: 30)
 User.create(username: "Katzilla912", first_name: "Kat", last_name: "Blackwood", age: 28)
 User.create(username: "Shady_Gravy", first_name: "Evan", last_name: "Brown", age: 30)
