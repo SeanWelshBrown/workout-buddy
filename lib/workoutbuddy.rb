@@ -50,7 +50,7 @@ class WorkoutBuddy
     User.find_by(username: input)
   end
 
-  def go_to_previous_menu
+  def go_to_previous_menu # MAKE BLOG POST ABOUT THIS #
     previous_method = caller[-3].split("`").pop.gsub("'", "")
     previous_method.to_sym
     send(previous_method)
@@ -162,7 +162,7 @@ class WorkoutBuddy
       Exercise.where(["type = ? and body_part = ?", "Strength", "#{input}"])
     end
   
-    def display_exercise_info(exercise_name, previous_menu)
+    def display_exercise_info(exercise_name)
       exercise = Exercise.find_by(name: exercise_name)
       puts "Name: #{exercise.name}"
       puts "\n"
@@ -181,6 +181,10 @@ class WorkoutBuddy
       elsif input == "Go back to previous menu"
         go_to_previous_menu
       end
+    end
+
+    def add_exercise_to_list
+
     end
 
     # EXERCISE MENU #
