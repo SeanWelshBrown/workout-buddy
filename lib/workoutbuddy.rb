@@ -132,15 +132,17 @@ class WorkoutBuddy
     system 'clear'
 
     puts "*--- MAIN MENU ---*"
-    input = PROMPT.select("Please select an option to navigate:", ["View Exercises", "View/Edit Your Saved Exercises", "Edit Account Information", "Log Out", "Exit Application"], cycle: true)
+    puts "\n"
+
+    input = PROMPT.select("Please select an option to navigate, #{@@current_user.first_name}:", ["View Exercises", "View/Edit Your Saved Exercises", "Edit Account Information", "Log Out (#{@@current_user.username})", "Exit Application"], cycle: true)
 
     if input == "View Exercises"
       view_exercises
     elsif input == "View/Edit Your Saved Exercises"
-
+      view_edit_saved_exercises
     elsif input == "Edit Account Information"
 
-    elsif input == "Log Out"
+    elsif input == "Log Out (#{@@current_user.username})"
       @@current_user = nil
       system 'clear'
       run
@@ -166,6 +168,8 @@ class WorkoutBuddy
   end
 
   def display_exercise_info(exercise_name, current_menu)
+    system 'clear'
+
     exercise = Exercise.find_by(name: exercise_name)
     puts "Name: #{exercise.name}"
     puts "\n"
@@ -173,34 +177,79 @@ class WorkoutBuddy
     puts "\n"
     puts "Muscle Group: #{exercise.muscle_group}"
     puts "\n"
-    puts "Description"
+    puts "Description:"
+    puts "\n"
     puts exercise.description
     puts "\n"
 
-    sleep 1.5
+    sleep 1
 
-    input = PROMPT.select("What would you like to do?", ["Add this exercise to my workout list", "Go back to previous menu"], cycle: true)
+    input = PROMPT.select("What would you like to do?", ["Add this exercise to my workout list", "\u{2b05}  Go back to previous menu"], cycle: true)
     
     if input == "Add this exercise to my workout list"
       if user_exercise_checker(@@current_user.id, exercise.id)
         system 'clear'
-        input = PROMPT.select("This exercise is already in your workout list.", ["Go back to previous menu"])
+        input = PROMPT.select("This exercise is already in your workout list.", ["\u{2b05}  Go back to previous menu"])
         if input
           menu = current_menu.to_sym
           send(menu)
         end
       elsif !user_exercise_checker(@@current_user.id, exercise.id)
         UserExercise.create(user_id: @@current_user.id, exercise_id: exercise.id)
-        input = PROMPT.select("Exercise successfully saved!", ["Go back to previous menu"])
+        input = PROMPT.select("Exercise successfully saved!", ["\u{2b05}  Go back to previous menu"])
         if input
           menu = current_menu.to_sym
           send(menu)
         end
       end
-    elsif input == "Go back to previous menu"
+    elsif input == "\u{2b05}  Go back to previous menu"
       menu = current_menu.to_sym
       send(menu)
     end
+  end
+
+  def display_or_remove_exercise(exercise_name, current_menu)
+    system 'clear'
+
+    exercise = Exercise.find_by(name: exercise_name)
+    puts "Name: #{exercise.name}"
+    puts "\n"
+    puts "Body Part: #{exercise.body_part}"
+    puts "\n"
+    puts "Muscle Group: #{exercise.muscle_group}"
+    puts "\n"
+    puts "Description:"
+    puts "\n"
+    puts exercise.description
+    puts "\n"
+
+    sleep 1
+
+    input = PROMPT.select("What would you like to do?", ["\u{1f6ab}  Remove this exercise from my workout list", "\u{2b05}  Go back to previous menu"], cycle: true)
+    
+    if input == "\u{1f6ab}  Remove this exercise from my workout list"
+      system 'clear'
+      input2 = PROMPT.select("Are you sure you want to remove this exercise from your list?", ["Yes", "No"])
+      if input2 == "Yes"
+        sleep 1
+        remove_exercise(exercise)
+        input3 = PROMPT.select("Exercise successfully removed.", ["\u{2b05}  Go back to previous menu"])
+        if input3
+          menu = current_menu.to_sym
+          send(menu)
+        end
+      elsif input2 == "No"
+        menu = current_menu.to_sym
+        send(menu)
+      end
+    elsif input == "\u{2b05}  Go back to previous menu"
+      menu = current_menu.to_sym
+      send(menu)
+    end
+  end
+
+  def remove_exercise(exercise)
+    UserExercise.find_by(user_id: @@current_user.id, exercise_id: exercise.id).destroy
   end
 
     #--- EXERCISE MENU ---#
@@ -209,13 +258,15 @@ class WorkoutBuddy
     system 'clear'
 
     puts "*--- VIEW EXERCISES ---*"
-    input = PROMPT.select("Would you like to learn about Strength Training or Cardio exercises?", ["Strength Training", "Cardio", "Go back to previous menu"], cycle: true)
+    puts "\n"
+
+    input = PROMPT.select("Would you like to learn about Strength Training or Cardio exercises?", ["Strength Training", "Cardio", "\u{2b05}  Go back to previous menu"], cycle: true)
 
     if input == "Strength Training"
       strength_training
     elsif input == "Cardio"
       cardio
-    elsif input == "Go back to previous menu"
+    elsif input == "\u{2b05}  Go back to previous menu"
       main_menu
     end
   end
@@ -226,7 +277,9 @@ class WorkoutBuddy
     system 'clear'
 
     puts "*--- STRENGTH TRAINING ---*"
-    input = PROMPT.select("What part of the body would you like to focus on?", ["Upper Body", "Legs", "Core", "Go back to previous menu"], cycle: true)
+    puts "\n"
+
+    input = PROMPT.select("What part of the body would you like to focus on?", ["Upper Body", "Legs", "Core", "\u{2b05}  Go back to previous menu"], cycle: true)
 
     if input == "Upper Body"
       upper_body
@@ -234,7 +287,7 @@ class WorkoutBuddy
       legs
     elsif input == "Core"
       core
-    elsif input == "Go back to previous menu"
+    elsif input == "\u{2b05}  Go back to previous menu"
       view_exercises
     end
   end
@@ -251,9 +304,11 @@ class WorkoutBuddy
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
     puts "*--- UPPER BODY ---*"
-    input = PROMPT.select("Select an exercise for more information:", exercise_names, "Go back to previous menu", cycle: true)
+    puts "\n"
 
-    if input == "Go back to previous menu"
+    input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
+
+    if input == "\u{2b05}  Go back to previous menu"
       strength_training
     else display_exercise_info(input, "upper_body")
     end
@@ -270,9 +325,11 @@ class WorkoutBuddy
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
     puts "*--- LEGS ---*"
-    input = PROMPT.select("Select an exercise for more information:", exercise_names, "Go back to previous menu", cycle: true)
+    puts "\n"
 
-    if input == "Go back to previous menu"
+    input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
+
+    if input == "\u{2b05}  Go back to previous menu"
       strength_training
     else display_exercise_info(input, "legs")
     end
@@ -288,9 +345,11 @@ class WorkoutBuddy
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
     puts "*--- CORE ---*"
-    input = PROMPT.select("Select an exercise for more information:", exercise_names, "Go back to previous menu", cycle: true)
+    puts "\n"
 
-    if input == "Go back to previous menu"
+    input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
+
+    if input == "\u{2b05}  Go back to previous menu"
       strength_training
     else display_exercise_info(input, "core")
     end
@@ -306,9 +365,11 @@ class WorkoutBuddy
     exercise_names = cardio_exercises.collect { |exercise| exercise.name }
 
     puts "*-- CARDIO --*"
-    input = PROMPT.select("Select an exercise for more information:", exercise_names, "Go back to previous menu", cycle: true)
+    puts "\n"
 
-    if input == "Go back to previous menu"
+    input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
+
+    if input == "\u{2b05}  Go back to previous menu"
       view_exercises
     else display_exercise_info(input, "cardio")
     end
@@ -317,7 +378,46 @@ class WorkoutBuddy
 #~~~ VIEW/EDIT SAVED EXERCISES ~~~*
 
   def view_edit_saved_exercises
+    system 'clear'
 
+    puts "*--- SAVED EXERCISES (YOUR WORKOUT) ---*"
+    puts "\n"
+
+    puts "Here is your current list of saved exercises, #{@@current_user.first_name}."
+    puts "\n"
+    puts "You may select an exercise to view its details again, or delete it from your list."
+    puts "\n"
+
+    saved_exercises = @@current_user.exercises
+    saved_exercises.reload
+    saved_exercise_names = saved_exercises.collect {|exercise| exercise.name}
+
+    input = PROMPT.select("Select an exercise:", saved_exercise_names, "\u{1f6ab}  Delete entire list", "\u{2b05}  Go back to previous menu", cycle: true)
+    if input == "\u{1f6ab}  Delete entire list"
+      system 'clear'
+      input2 = PROMPT.select("Are you sure you want to delete your entire workout list?", ["Yes", "No"])
+      if input2 == "Yes"
+        delete_list
+      elsif input2 == "No"
+        view_edit_saved_exercises
+      end
+    elsif input == "\u{2b05}  Go back to previous menu"
+      main_menu
+    else display_or_remove_exercise(input, "view_edit_saved_exercises")
+    end
   end
+
+    #--- DELETE WORKOUT LIST METHOD ---#
+
+  def delete_list
+    sleep 1
+    UserExercise.where(user_id: @@current_user.id).destroy_all
+    input = PROMPT.select("List successfully deleted.", ["\u{2b05}  Go back to previous menu"])
+    if input
+      view_edit_saved_exercises
+    end
+  end
+
+#~~~ EDIT USER ACCOUNT INFORMATION ~~~#
 
 end
