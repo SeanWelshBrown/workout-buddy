@@ -19,14 +19,10 @@ class WorkoutBuddy
 
 #~~~ GENERAL METHODS ~~~#
 
-  def logo 
-    file = File.open("lib/ascii/logo.txt")
-    logo = file.read
-    puts logo 
-  end
-
   def exit_app(current_menu)
     system 'clear'
+
+    exit_ascii
 
     input = PROMPT.select('Are you sure you want to exit?', ["Yes", "No"], cycle: true)
     if input == "Yes"
@@ -55,12 +51,98 @@ class WorkoutBuddy
   #   send(previous_method)
   # end
 
+#~~~ ASCII METHODS ~~~#
+
+def logo_ascii
+  file = File.open("lib/ascii/logo.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def login_ascii
+  file = File.open("lib/ascii/login.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def exit_ascii
+  file = File.open("lib/ascii/exit.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def create_account_ascii
+  file = File.open("lib/ascii/create_account.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def main_menu_ascii
+  file = File.open("lib/ascii/main_menu.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def exercises_ascii
+  file = File.open("lib/ascii/exercises.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def strength_training_ascii
+  file = File.open("lib/ascii/strength_training.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def upper_body_ascii
+  file = File.open("lib/ascii/upper_body.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def legs_ascii
+  file = File.open("lib/ascii/legs.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def core_ascii
+  file = File.open("lib/ascii/core.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def cardio_ascii
+  file = File.open("lib/ascii/cardio.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def saved_exercises_ascii
+  file = File.open("lib/ascii/saved_exercises.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def account_info_ascii
+  file = File.open("lib/ascii/account_info.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def log_out_ascii
+  file = File.open("lib/ascii/log_out.txt")
+  ascii = file.read
+  puts ascii
+end
+
 #~~~ LOGIN METHODS ~~~#
 
   def login
     system 'clear'
 
-    puts logo
+    puts logo_ascii
 
     puts "Welcome to WorkoutBuddy, your source for quality exercise tips and your very own personal exercise tracker!"
     puts "\n"
@@ -79,6 +161,9 @@ class WorkoutBuddy
 
   def log_into_account
     system 'clear'
+
+    login_ascii
+
     input = PROMPT.ask("Please enter your Username, or 'create account' to create a new account. You may also enter 'go back' to return to the previous menu.", convert: :string, required: true)
     if input == "create account"
       create_account
@@ -89,6 +174,9 @@ class WorkoutBuddy
     if user_check
       system 'clear'
       @@current_user = user_check
+
+      login_ascii
+
       puts "Successfully logged in. Nice to see you again, #{@@current_user.first_name}!"
     elsif !user_check
       puts "No User Account found with that Username. Please try again."
@@ -104,6 +192,8 @@ class WorkoutBuddy
     first_name = nil
     last_name = nil
     age = nil
+
+    create_account_ascii
 
     input1 = PROMPT.ask("Please enter a Username. You may use only upper and lower case letters, as well as numbers. You may also enter 'go back' to return to the previous menu:", convert: :string, required: true)
     
@@ -142,8 +232,7 @@ class WorkoutBuddy
   def main_menu
     system 'clear'
 
-    puts "*--- MAIN MENU ---*"
-    puts "\n"
+    main_menu_ascii
 
     input = PROMPT.select("Please select an option to navigate, #{@@current_user.first_name}:", ["View Exercises", "View/Edit Your Saved Exercises", "Edit Account Information", "\u{1f6b7} Log Out (#{@@current_user.username})", "\u{1f6ab} Exit Application"], cycle: true)
 
@@ -156,6 +245,11 @@ class WorkoutBuddy
     elsif input == "\u{1f6b7} Log Out (#{@@current_user.username})"
       @@current_user = nil
       system 'clear'
+      log_out_ascii
+      puts "Logging you out..."
+      sleep 1.5
+      puts "Successfully logged out. See you soon!"
+      sleep 1.5
       run
     elsif input == "\u{1f6ab} Exit Application"
       exit_app("main_menu")
@@ -193,7 +287,7 @@ class WorkoutBuddy
     puts exercise.description
     puts "\n"
 
-    sleep 1
+    sleep 0.5
 
     input = PROMPT.select("What would you like to do?", ["Add this exercise to my workout list", "\u{2b05}  Go back to previous menu"], cycle: true)
     
@@ -234,7 +328,7 @@ class WorkoutBuddy
     puts exercise.description
     puts "\n"
 
-    sleep 1
+    sleep 0.5
 
     input = PROMPT.select("What would you like to do?", ["\u{1f6ab}  Remove this exercise from my workout list", "\u{2b05}  Go back to previous menu"], cycle: true)
     
@@ -268,8 +362,7 @@ class WorkoutBuddy
   def view_exercises
     system 'clear'
 
-    puts "*--- VIEW EXERCISES ---*"
-    puts "\n"
+    exercises_ascii
 
     input = PROMPT.select("Would you like to learn about Strength Training or Cardio exercises?", ["\u{1F3CB} Strength Training", "\u{1F3C3} Cardio", "\u{2b05}  Go back to previous menu"], cycle: true)
 
@@ -287,8 +380,7 @@ class WorkoutBuddy
   def strength_training
     system 'clear'
 
-    puts "*--- STRENGTH TRAINING ---*"
-    puts "\n"
+    strength_training_ascii
 
     input = PROMPT.select("What part of the body would you like to focus on?", ["\u{1F4AA} Upper Body", "\u{1F9B5} Legs", "\u{1F455} Core", "\u{2b05}  Go back to previous menu"], cycle: true)
 
@@ -314,8 +406,7 @@ class WorkoutBuddy
 
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
-    puts "*--- UPPER BODY ---*"
-    puts "\n"
+    upper_body_ascii
 
     input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
 
@@ -335,8 +426,7 @@ class WorkoutBuddy
 
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
-    puts "*--- LEGS ---*"
-    puts "\n"
+    legs_ascii
 
     input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
 
@@ -355,8 +445,7 @@ class WorkoutBuddy
 
     exercise_names = flatten_exercises.collect { |exercise| exercise.name }
 
-    puts "*--- CORE ---*"
-    puts "\n"
+    core_ascii
 
     input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
 
@@ -375,8 +464,7 @@ class WorkoutBuddy
 
     exercise_names = cardio_exercises.collect { |exercise| exercise.name }
 
-    puts "*-- CARDIO --*"
-    puts "\n"
+    cardio_ascii
 
     input = PROMPT.select("Select an exercise for more information:", exercise_names, "\u{2b05}  Go back to previous menu", cycle: true)
 
@@ -391,8 +479,7 @@ class WorkoutBuddy
   def view_edit_saved_exercises
     system 'clear'
 
-    puts "*--- SAVED EXERCISES (YOUR WORKOUT) ---*"
-    puts "\n"
+    saved_exercises_ascii
 
     puts "Here is your current list of saved exercises, #{@@current_user.first_name}."
     puts "\n"
@@ -437,8 +524,7 @@ class WorkoutBuddy
 
     # table = TTY::Table[['a1', 'a2'], ['b1', 'b2']]
 
-    puts "*--- ACCOUNT INFO ---*"
-    puts "\n"
+    account_info_ascii
     puts "CURRENT INFORMATION"
     puts "\n"
     puts table.render :unicode
