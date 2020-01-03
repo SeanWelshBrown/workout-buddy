@@ -13,8 +13,6 @@ class WorkoutBuddy
 
   def run 
     login
-    sleep 2
-    main_menu
   end
 
 #~~~ GENERAL METHODS ~~~#
@@ -137,6 +135,42 @@ def log_out_ascii
   puts ascii
 end
 
+def delete_list_ascii
+  file = File.open("lib/ascii/delete_list.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def change_username_ascii
+  file = File.open("lib/ascii/change_username.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def change_first_name_ascii
+  file = File.open("lib/ascii/change_first_name.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def change_last_name_ascii
+  file = File.open("lib/ascii/change_last_name.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def change_age_ascii
+  file = File.open("lib/ascii/change_age.txt")
+  ascii = file.read
+  puts ascii
+end
+
+def delete_account_ascii
+  file = File.open("lib/ascii/delete_account.txt")
+  ascii = file.read
+  puts ascii
+end
+
 #~~~ LOGIN METHODS ~~~#
 
   def login
@@ -178,6 +212,8 @@ end
       login_ascii
 
       puts "Successfully logged in. Nice to see you again, #{@@current_user.first_name}!"
+      sleep 2
+      main_menu
     elsif !user_check
       puts "No User Account found with that Username. Please try again."
       sleep 1.5
@@ -215,14 +251,16 @@ end
       back_check(first_name, "login")
       last_name = PROMPT.ask("Please enter your last name. You may also enter 'go back' to return to the previous menu:", default: nil, convert: :string, required: true)
       back_check(last_name, "login")
-      age = PROMPT.ask("Please enter your current age. You may also enter 'go back' to return to the previous menu:", default: nil, convert: :int, required: true)
+      age = PROMPT.ask("Please enter your current age. You may also enter 'go back' to return to the previous menu:", default: nil, convert: :string, required: true)
       back_check(age, "login")
+      age.to_i
       
       sleep 1.5
 
       @@current_user = User.create(username: username, first_name: first_name, last_name: last_name, age: age)
       puts "Account successfully created! You are now logged in as #{username}."
-      return
+      sleep 2
+      main_menu
     end
 
   end
@@ -490,9 +528,10 @@ end
     saved_exercises.reload
     saved_exercise_names = saved_exercises.collect {|exercise| exercise.name}
 
-    input = PROMPT.select("Select an exercise:", saved_exercise_names, "\u{1f6ab}  Delete entire list", "\u{2b05}  Go back to previous menu", cycle: true)
+    input = PROMPT.select("Select an exercise:", saved_exercise_names, "\u{1f6ab}  Delete entire list", "\u{2b05}  Go back to previous menu", cycle: true, per_page: 20)
     if input == "\u{1f6ab}  Delete entire list"
       system 'clear'
+      delete_list_ascii
       input2 = PROMPT.select("Are you sure you want to delete your entire workout list?", ["Yes", "No"])
       if input2 == "Yes"
         delete_list
@@ -543,6 +582,9 @@ end
       change_age
     elsif input == "\u{1f6ab}  Delete account"
       system 'clear'
+
+      delete_account_ascii
+
       input2 = PROMPT.select("Are you sure you want to delete your account? This is a permanent action, there will be no recovery of data possible after confirmation.", ["Yes", "No"])
       if input2 == "Yes"
         delete_account
@@ -559,13 +601,17 @@ end
   def change_username
     system 'clear'
 
+    change_username_ascii
+
     input = PROMPT.ask("Please enter a new Username. You may use only upper and lower case letters, as well as numbers. You may also enter 'go back' to return to the previous menu.", convert: :string, required: true)
 
     back_check(input, "account_info")
 
     if input.index( /[^[:alnum:]]/ ) || input.include?(" ")
+      system 'clear'
+      change_username_ascii
       puts "Username contains invalid characters, please try again."
-      sleep 1.5
+      sleep 2
       change_username
     end
 
@@ -589,6 +635,8 @@ end
   def change_first_name
     system 'clear'
 
+    change_first_name_ascii
+
     input = PROMPT.ask("Please enter a new preferred First Name. You may also enter 'go back' to return to the previous menu:", convert: :string, required: true)
 
     back_check(input, "account_info")
@@ -605,6 +653,8 @@ end
 
   def change_last_name
     system 'clear'
+
+    change_last_name_ascii
 
     input = PROMPT.ask("Please enter a new Last Name. You may also enter 'go back' to return to the previous menu:", convert: :string, required: true)
 
@@ -623,11 +673,13 @@ end
   def change_age
     system 'clear'
 
+    change_age_ascii
+
     input = PROMPT.ask("Please update your age. You may also enter 'go back' to return to the previous menu:", convert: :string, required: true)
 
     back_check(input, "account_info")
 
-    input.to_int
+    input.to_i
 
     sleep 1.5
     @@current_user.age = input
@@ -640,7 +692,11 @@ end
   end
 
   def delete_account
+    system 'clear'
+    delete_account_ascii
+
     sleep 1
+
     User.find_by(id: @@current_user.id).destroy
     input = PROMPT.select("Account successfully deleted, we're sorry to see you go.", ["\u{2b05}  Return to Login menu"])
     if input
